@@ -35,7 +35,7 @@ The core logic resides in dedicated Artisan commands scheduled to run during mar
 2. Run `composer install`.
 3. Copy `.env.example` to `.env` and configure your database and IOL API credentials.
 4. Run `php artisan key:generate`.
-5. Run migrations: `php artisan migrate`.
+5. Run migrations: `php artisan migrate --seed`.
 6. Set up the Cron job on your server to run `php artisan schedule:run` every minute.
 
 > **Note:** You must have an active InvertirOnline account with API access enabled.

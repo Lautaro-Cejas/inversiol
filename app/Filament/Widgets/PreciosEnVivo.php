@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Activo;
 use App\Services\IolService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -17,7 +18,7 @@ class PreciosEnVivo extends BaseWidget
     protected function getStats(): array
     {
         $iolService = app(IolService::class);
-        $activos = ['SPY', 'NVDA', 'MSTR', 'TSLA'];
+        $activos = Activo::monitoreados()->pluck('simbolo')->toArray();
         $stats = [];
 
         foreach ($activos as $simbolo) {    
