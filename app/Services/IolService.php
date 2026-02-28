@@ -100,10 +100,7 @@ class IolService
      */
     public function getCotizacion($simbolo): float
     {
-        $token = $this->getToken();
-        
-        $response = Http::withToken($token)
-            ->get("{$this->baseUrl}/api/v2/bCBA/Titulos/{$simbolo}/Cotizacion");
+        $response = $this->sendRequest('get', "/api/v2/bCBA/Titulos/{$simbolo}/Cotizacion");
 
         if ($response->successful()) {
             $data = $response->json();
@@ -181,6 +178,18 @@ class IolService
         }
 
         Log::error("Error al intentar comprar {$simbolo}: " . $response->body());
+        return null;
+    }
+
+    public function getFullCotizacion($simbolo): ?array
+    {
+        $response = $this->sendRequest('get', "/api/v2/bCBA/Titulos/{$simbolo}/Cotizacion");
+        
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        Log::error("Error IOL en cotización completa de {$simbolo}: " . $response->body());
         return null;
     }
 }
