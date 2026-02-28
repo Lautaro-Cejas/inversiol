@@ -42,7 +42,7 @@ The core logic resides in dedicated Artisan commands scheduled to run during mar
 
 ## ⚠️ Disclaimer
 
-This software is for educational and portfolio demonstration purposes. Algorithmic trading involves significant financial risk. The author is not responsible for any financial losses incurred through the use of this automated system.
+This is an UNOFFICIAL tool. Not affiliated with, maintained, or endorsed by InvertirOnline S.A. This software is for educational and portfolio demonstration purposes. Algorithmic trading involves significant financial risk. The author is not responsible for any financial losses incurred through the use of this automated system.
 
 ## 📄 License
 
