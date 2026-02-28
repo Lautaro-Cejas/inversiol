@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('inversions', function (Blueprint $table) {
+            $table->id();
+            $table->string('activo');
+            $table->decimal('cantidad', 15, 8);
+            $table->decimal('precio_compra', 15, 2);
+            $table->date('fecha_operacion');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('inversions');
+    }
+};
