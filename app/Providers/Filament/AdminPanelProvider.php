@@ -34,8 +34,12 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('favicon.png'))
             ->login()
             ->colors([
-                'primary' => Color::Lime,
-                'secondary' => Color::Purple,
+                'primary' => Color::Indigo,
+                'gray' => Color::Zinc,
+                'info' => Color::Sky,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'danger' => Color::Rose,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

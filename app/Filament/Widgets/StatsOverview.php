@@ -70,7 +70,8 @@ class StatsOverview extends BaseWidget
 
             Stat::make('Efectivo Disponible (ARS)', '$ ' . number_format($saldoDisponibleARS, 2, ',', '.'))
                 ->description('Saldo líquido en IOL para operar')
-                ->color('secondary')
+                ->descriptionColor('gray') 
+                ->color('primary')        
                 ->icon('heroicon-m-banknotes'),
         ];
     }
