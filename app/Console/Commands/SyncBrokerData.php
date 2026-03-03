@@ -64,6 +64,8 @@ class SyncBrokerData extends Command
      */
     private function syncPortafolio(IolService $iolService): void
     {
+        $usuario = User::first(); 
+
         try {
             $portafolioReal = $iolService->getPortafolio(); 
             $simbolosEnPortafolio = collect($portafolioReal)->pluck('titulo.simbolo')->toArray();
@@ -89,7 +91,6 @@ class SyncBrokerData extends Command
                 );
                 
                 if ($cantidadAnterior == 0 && $cantidadNueva > 0) {
-                    $usuario = User::first(); 
                     if ($usuario) {
                         Notification::make()
                             ->title('¡Activo Liquidado!')

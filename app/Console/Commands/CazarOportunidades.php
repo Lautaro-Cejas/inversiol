@@ -27,6 +27,10 @@ class CazarOportunidades extends Command
     {
         $oportunidades = Oportunidad::where('estado', 'Pendiente')
             ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('disponible_desde')
+                      ->orWhere('disponible_desde', '<=', now());
+            })
             ->get();
 
         if ($oportunidades->isEmpty()) {
@@ -71,6 +75,19 @@ class CazarOportunidades extends Command
                     $saldoDisponible -= $costoEstimado;
                     
                     $this->info("Order filled successfully. Target: {$oportunidad->simbolo}");
+
+                    if ($oportunidad->es_recurrente) {
+                        $nuevaOportunidad = $oportunidad->replicate();
+                        
+                        if ($oportunidad->mejora_porcentaje > 0) {
+                            $descuento = $oportunidad->precio_gatillo * ($oportunidad->mejora_porcentaje / 100);
+                            $nuevaOportunidad->precio_gatillo = round($oportunidad->precio_gatillo - $descuento, 2);
+                        }
+
+                        $nuevaOportunidad->estado = 'Pendiente';
+                        $nuevaOportunidad->disponible_desde = now()->addDay()->startOfDay(); 
+                        $nuevaOportunidad->save();
+                    }
 
                     if ($usuario) {
                         Notification::make()

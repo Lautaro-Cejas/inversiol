@@ -15,5 +15,19 @@ class Oportunidad extends Model
         'cantidad',
         'estado',
         'is_active',
+        'es_recurrente',
+        'disponible_desde',
+        'mejora_porcentaje',
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     */
+    protected function casts(): array
+    {
+        return [
+            'es_recurrente' => 'boolean',
+            'disponible_desde' => 'datetime',
+        ];
+    }
 }

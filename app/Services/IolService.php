@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Service class to interact with InvertirOnline (IOL) API for trading operations.
+ * Handles authentication, portfolio retrieval, order placement, and more.
+ */
 class IolService
 {
     protected string $baseUrl = 'https://api.invertironline.com';
