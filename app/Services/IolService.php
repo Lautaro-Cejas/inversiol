@@ -114,28 +114,29 @@ class IolService
     /**
      * Sends a sell order to IOL. Returns the API response or null in case of error.
      */
-    public function venderActivo($simbolo, $cantidad, $precio, $plazo = 't2')
+    public function venderActivo($simbolo, $cantidad, $precio, $plazo = 't0')
     {
-        $response = $this->sendRequest('post', '/api/v2/Operar/Vender', [
+        $response = $this->sendRequest('post', '/api/v2/operar/Vender', [
             'mercado' => 'bCBA',
             'simbolo' => $simbolo,
-            'cantidad' => (int) $cantidad, 
-            'precio' => round((float) $precio, 2), 
+            'cantidad' => (int) $cantidad,
+            'precio' => round((float) $precio, 2),
+            'validez' => now()->toIso8601String(),
+            'tipoOrden' => 'precioLimite',
             'plazo' => $plazo,
-            'validez' => 'hoy',
         ]);
 
         if ($response->successful()) {
-            Log::info("Selling order sent: " . ((int)$cantidad) . " {$simbolo} a $ " . round((float)$precio, 2));
+            Log::info("Sell order sent: " . ((int)$cantidad) . " {$simbolo} a $ " . round((float)$precio, 2));
             return $response->json();
         }
 
-        Log::error("Error IOL Selling {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
+        Log::error("Error IOL Sell {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
         return null;
     }
 
     /**
-     * Sends a buy order to IOL. Returns the API response or null in case of error.
+     * Sends an HTTP request to IOL API with the current access token. If the token is revoked, it will automatically refresh and retry the request once. Returns the API response.
      */
     private function sendRequest(string $method, string $endpoint, array $data = [])
     {
@@ -161,21 +162,22 @@ class IolService
      */
     public function comprarActivo($simbolo, $cantidad, $precio, $plazo = 't2')
     {
-        $response = $this->sendRequest('post', '/api/v2/Operar/Comprar', [
+        $response = $this->sendRequest('post', '/api/v2/operar/Comprar', [
             'mercado' => 'bCBA',
             'simbolo' => $simbolo,
-            'cantidad' => $cantidad,
-            'precio' => $precio,
-            'plazo' => $plazo, 
-            'validez' => 'hoy', 
+            'cantidad' => (int) $cantidad, 
+            'precio' => round((float) $precio, 2), 
+            'plazo' => $plazo,
+            'validez' => now()->toIso8601String(), 
+            'tipoOrden' => 'precioLimite', 
         ]);
 
         if ($response->successful()) {
-            Log::info("Orden de COMPRA enviada: {$cantidad} {$simbolo} a $ {$precio}");
+            Log::info("Buy order sent: " . ((int)$cantidad) . " {$simbolo} a $ " . round((float)$precio, 2));
             return $response->json();
         }
 
-        Log::error("Error IOL Compra {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
+        Log::error("Error IOL Buy {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
         return null;
     }
 
