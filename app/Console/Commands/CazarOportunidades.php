@@ -25,7 +25,7 @@ class CazarOportunidades extends Command
      */
     public function handle(IolService $iolService): void
     {
-        $oportunidades = Oportunidad::where('estado', 'pendiente')
+        $oportunidades = Oportunidad::where('estado', 'Pendiente')
             ->where('is_active', true)
             ->get();
 
@@ -66,7 +66,7 @@ class CazarOportunidades extends Command
                 );
 
                 if ($respuesta && isset($respuesta['numeroOperacion'])) {
-                    $oportunidad->update(['estado' => 'ejecutada']);
+                    $oportunidad->update(['estado' => 'Ejecutada']);
                     $this->info("Order filled successfully. Target: {$oportunidad->simbolo}");
 
                     if ($usuario) {

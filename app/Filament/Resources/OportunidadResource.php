@@ -63,9 +63,9 @@ class OportunidadResource extends Resource
                 TextColumn::make('estado')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'pendiente' => 'warning',
-                        'ejecutada' => 'success',
-                        'cancelada' => 'danger',
+                        'Pendiente' => 'warning',
+                        'Ejecutada' => 'success',
+                        'Cancelada' => 'danger',
                         default => 'gray',
                     }),
                 ToggleColumn::make('is_active')->label('Activa'),
@@ -76,9 +76,9 @@ class OportunidadResource extends Resource
             ->filters([
                 SelectFilter::make('estado')
                     ->options([
-                        'pendiente' => 'Pendiente',
-                        'ejecutada' => 'Ejecutada',
-                        'cancelada' => 'Cancelada',
+                        'Pendiente' => 'Pendiente',
+                        'Ejecutada' => 'Ejecutada',
+                        'Cancelada' => 'Cancelada',
                     ]),
             ])
             ->actions([
