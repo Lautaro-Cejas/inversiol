@@ -114,7 +114,7 @@ class IolService
     /**
      * Sends a sell order to IOL. Returns the API response or null in case of error.
      */
-    public function venderActivo($simbolo, $cantidad, $precio, $plazo = 't0')
+    public function venderActivo($simbolo, $cantidad, $precio, $plazo = 't2')
     {
         $token = $this->getToken();
         
@@ -132,7 +132,7 @@ class IolService
             return $response->json();
         }
 
-        Log::error("Error al intentar vender {$simbolo}: " . $response->body());
+        Log::error("Error IOL Venta {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
         return null;
     }
 
@@ -161,7 +161,7 @@ class IolService
     /**
      * Sends a buy order to IOL. Returns the API response or null in case of error.
      */
-    public function comprarActivo($simbolo, $cantidad, $precio, $plazo = 't0')
+    public function comprarActivo($simbolo, $cantidad, $precio, $plazo = 't2')
     {
         $response = $this->sendRequest('post', '/api/v2/Operar/Comprar', [
             'mercado' => 'bCBA',

@@ -132,7 +132,7 @@ class InversionResource extends Resource
                             return;
                         }
 
-                        $respuesta = $iolService->venderActivo($record->activo, $record->cantidad, $precioActual, 't0');
+                        $respuesta = $iolService->venderActivo($record->activo, $record->cantidad, $precioActual, 't2');
 
                         if ($respuesta && isset($respuesta['numeroOperacion'])) {
                             $record->update(['cantidad' => 0]); 

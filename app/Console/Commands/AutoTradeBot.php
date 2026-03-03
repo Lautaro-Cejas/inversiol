@@ -70,7 +70,7 @@ class AutoTradeBot extends Command
 
                 if ($this->option('execute')) {
                     $this->info("Executing market order...");
-                    $respuesta = $iolService->venderActivo($activo->activo, $activo->cantidad, $precioActual, 't0');
+                    $respuesta = $iolService->venderActivo($activo->activo, $activo->cantidad, $precioActual, 't2');
                     
                     if ($respuesta && isset($respuesta['numeroOperacion'])) {
                         $activo->update(['cantidad' => 0, 'precio_actual' => $precioActual]);
