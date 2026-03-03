@@ -91,7 +91,7 @@ class OportunidadResource extends Resource
                 IconColumn::make('es_recurrente')
                     ->boolean()
                     ->label('Recurrente')
-                    ->trueIcon('heroicon-o-repeat')
+                    ->trueIcon('heroicon-o-arrow-path')
                     ->falseIcon('heroicon-o-x-circle'),
                 TextColumn::make('mejora_porcentaje')
                     ->suffix('%')
