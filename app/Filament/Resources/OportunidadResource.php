@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OportunidadResource\Pages;
 use App\Models\Oportunidad;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,8 +13,11 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Carbon\Carbon;
+use Filament\Forms\Get;
 
 class OportunidadResource extends Resource
 {
@@ -45,11 +49,23 @@ class OportunidadResource extends Resource
                         'Ejecutada' => 'Ejecutada',
                         'Cancelada' => 'Cancelada',
                     ])
-                    ->default('pendiente')
+                    ->default('Pendiente')
                     ->required(),
                 Toggle::make('is_active')
                     ->label('Activa')
                     ->default(true),
+                Toggle::make('es_recurrente')
+                    ->label('¿Repetir compra?')
+                    ->inline(false)
+                    ->live(),
+                TextInput::make('mejora_porcentaje')
+                    ->numeric()
+                    ->suffix('%')
+                    ->default(0)
+                    ->visible(fn (Get $get) => $get('es_recurrente')),
+                DateTimePicker::make('disponible_desde')
+                    ->placeholder('Inmediato')
+                    ->visible(fn (Get $get) => $get('es_recurrente')), 
             ]);
     }
 
@@ -72,6 +88,19 @@ class OportunidadResource extends Resource
                 TextColumn::make('updated_at')
                     ->dateTime('d/m/Y H:i')
                     ->label('Última revisión'),
+                IconColumn::make('es_recurrente')
+                    ->boolean()
+                    ->label('Recurrente')
+                    ->trueIcon('heroicon-o-repeat')
+                    ->falseIcon('heroicon-o-x-circle'),
+                TextColumn::make('mejora_porcentaje')
+                    ->suffix('%')
+                    ->label('Mejora %'),
+                TextColumn::make('disponible_desde')
+                    ->label('Disponible desde')
+                    ->badge()
+                    ->color('info')
+                    ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->diffForHumans() : 'Inmediato'),
             ])
             ->filters([
                 SelectFilter::make('estado')
