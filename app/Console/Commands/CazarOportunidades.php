@@ -33,6 +33,9 @@ class CazarOportunidades extends Command
             return;
         }
 
+        $usuario = User::first();
+        $saldoDisponible = $iolService->getSaldo();
+
         foreach ($oportunidades as $oportunidad) {
             $precioActual = $iolService->getCotizacion($oportunidad->simbolo);
 
@@ -42,9 +45,7 @@ class CazarOportunidades extends Command
             }
 
             if ($precioActual <= $oportunidad->precio_gatillo) {
-                $saldoDisponible = $iolService->getSaldo();
                 $costoEstimado = $precioActual * $oportunidad->cantidad;
-                $usuario = User::first();
 
                 if ($costoEstimado > $saldoDisponible) {
                     $this->error("Insufficient funds for {$oportunidad->simbolo}. Required: $ {$costoEstimado}, Available: $ {$saldoDisponible}.");
@@ -67,6 +68,8 @@ class CazarOportunidades extends Command
 
                 if ($respuesta && isset($respuesta['numeroOperacion'])) {
                     $oportunidad->update(['estado' => 'Ejecutada']);
+                    $saldoDisponible -= $costoEstimado;
+                    
                     $this->info("Order filled successfully. Target: {$oportunidad->simbolo}");
 
                     if ($usuario) {
