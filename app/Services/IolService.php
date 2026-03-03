@@ -177,10 +177,13 @@ class IolService
             return $response->json();
         }
 
-        Log::error("Error al intentar comprar {$simbolo}: " . $response->body());
+        Log::error("Error IOL Compra {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
         return null;
     }
 
+    /**
+     * Get the full quotation details of a specific asset in IOL. Returns an array with all the quotation data or null in case of error.
+     */
     public function getFullCotizacion($simbolo): ?array
     {
         $response = $this->sendRequest('get', "/api/v2/bCBA/Titulos/{$simbolo}/Cotizacion");
@@ -191,5 +194,17 @@ class IolService
 
         Log::error("Error IOL en cotización completa de {$simbolo}: " . $response->body());
         return null;
+    }
+
+    /**
+     * Checks if the current time is within IOL's trading hours.
+     * Returns true if it's a weekday (Monday to Friday) and between 11:00 and 17:00 in Argentina timezone.
+     */
+    public function esHorarioDeMercado(): bool
+    {
+        $ahora = now()->timezone('America/Argentina/Buenos_Aires');
+        
+        return $ahora->isWeekday() && 
+            $ahora->between('11:00', '17:00');
     }
 }
