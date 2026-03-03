@@ -28,6 +28,8 @@ class Inversion extends Model
     {
         $referencia = $this->precio_maximo ?? $this->precio_compra;
         
-        return $referencia * (1 - ($this->stop_loss_porcentaje / 100));
+        $porcentaje_absoluto = abs((float) $this->stop_loss_porcentaje);
+        
+        return $referencia * (1 - ($porcentaje_absoluto / 100));
     }
 }
