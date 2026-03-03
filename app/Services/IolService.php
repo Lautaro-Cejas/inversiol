@@ -116,23 +116,21 @@ class IolService
      */
     public function venderActivo($simbolo, $cantidad, $precio, $plazo = 't2')
     {
-        $token = $this->getToken();
-        
-        $response = Http::withToken($token)->post("{$this->baseUrl}/api/v2/Operar/Vender", [
+        $response = $this->sendRequest('post', '/api/v2/Operar/Vender', [
             'mercado' => 'bCBA',
             'simbolo' => $simbolo,
-            'cantidad' => $cantidad,
-            'precio' => $precio,
-            'plazo' => $plazo,     
-            'validez' => 'hoy',     
+            'cantidad' => (int) $cantidad, 
+            'precio' => round((float) $precio, 2), 
+            'plazo' => $plazo,
+            'validez' => 'hoy',
         ]);
 
         if ($response->successful()) {
-            Log::info("Orden de VENTA enviada: {$cantidad} {$simbolo} a $ {$precio}");
+            Log::info("Selling order sent: " . ((int)$cantidad) . " {$simbolo} a $ " . round((float)$precio, 2));
             return $response->json();
         }
 
-        Log::error("Error IOL Venta {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
+        Log::error("Error IOL Selling {$simbolo} | Status: {$response->status()} | Body: " . $response->body());
         return null;
     }
 
