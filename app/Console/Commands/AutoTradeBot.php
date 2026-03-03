@@ -11,7 +11,7 @@ use App\Notifications\AlertaEstancamiento;
 use App\Models\User;
 
 /**
- * Automates the execution of Take Profit and Stop Loss strategies.
+ * Automates the execution of Take Profit and Trailing Stop Loss strategies.
  * Evaluates currently held assets against predefined performance thresholds.
  */
 class AutoTradeBot extends Command
@@ -34,8 +34,11 @@ class AutoTradeBot extends Command
         foreach ($cartera as $activo) {
             $precioActual = $iolService->getCotizacion($activo->activo);
             
-            if ($precioActual <= 0) {
-                continue;
+            if ($precioActual <= 0) continue;
+
+            if ($precioActual > ($activo->precio_maximo ?? $activo->precio_compra)) {
+                $activo->update(['precio_maximo' => $precioActual]);
+                $this->info("New maximum price for {$activo->activo}: $ " . number_format($precioActual, 2));
             }
 
             $rendimiento = (($precioActual - $activo->precio_compra) / $activo->precio_compra) * 100;
@@ -44,7 +47,6 @@ class AutoTradeBot extends Command
             $diasEstancado = Carbon::parse($activo->fecha_operacion)->diffInDays(now());
 
             if ($diasEstancado >= 15 && $rendimiento > -1.5 && $rendimiento < 1.5) {
-                
                 $cacheKey = "alerta_estancada_{$activo->id}";
 
                 if (!Cache::has($cacheKey)) {
@@ -52,24 +54,32 @@ class AutoTradeBot extends Command
                     if ($usuario) {
                         $usuario->notify(new AlertaEstancamiento($activo, $diasEstancado, $rendimiento));
                     }
-
                     Cache::put($cacheKey, true, now()->addHours(24));
                 }
             }
 
-            // Define target thresholds for risk management
-            $takeProfit = (float) $activo->take_profit_porcentaje; 
-            $stopLoss = (float) $activo->stop_loss_porcentaje;
+            $takeProfitThreshold = (float) $activo->take_profit_porcentaje; 
+            $precioGatilloSL = $activo->stop_loss_price; 
 
-            if ($rendimiento >= $takeProfit || $rendimiento <= $stopLoss) {
-                $motivo = $rendimiento >= $takeProfit ? 'TAKE PROFIT 🚀' : 'STOP LOSS ⚠️';
+            $cumpleTP = $rendimiento >= $takeProfitThreshold;
+            $cumpleSL = $precioActual <= $precioGatilloSL; 
+
+            if ($cumpleTP || $cumpleSL) {
+                $motivo = $cumpleTP ? 'TAKE PROFIT 🚀' : 'TRAILING STOP LOSS ⚠️';
                 $this->warn("Trade condition met for {$activo->activo} [{$motivo}]");
 
                 if ($this->option('execute')) {
                     $this->info("Executing market order...");
-                    $iolService->venderActivo($activo->activo, $activo->cantidad, $precioActual, 't0');
+                    $respuesta = $iolService->venderActivo($activo->activo, $activo->cantidad, $precioActual, 't0');
+                    
+                    if ($respuesta && isset($respuesta['numeroOperacion'])) {
+                        $activo->update(['cantidad' => 0, 'precio_actual' => $precioActual]);
+                        $this->info("Order filled successfully for {$activo->activo}.");
+                    } else {
+                        $this->error("Broker rejected the order. Check logs.");
+                    }
                 } else {
-                    $this->info("Simulation Mode: System would have sold {$activo->cantidad} {$activo->activo} at $ {$precioActual}.");
+                    $this->info("Simulation Mode: System would have sold {$activo->cantidad} {$activo->activo} at $ {$precioActual}. (SL Trigger was: $ {$precioGatilloSL})");
                 }
             }
         }

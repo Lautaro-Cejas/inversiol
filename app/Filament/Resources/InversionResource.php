@@ -94,6 +94,12 @@ class InversionResource extends Resource
                     ->label('SL %')
                     ->color('danger')
                     ->suffix('%'),
+                TextColumn::make('precio_maximo')
+                    ->label('Máximo Alcanzado')
+                    ->money('ARS')
+                    ->default(fn (Inversion $record) => $record->precio_compra)
+                    ->description(fn (Inversion $record) => "Gatillo SL: $ " . number_format($record->stop_loss_price, 2))
+                    ->sortable(),
             ])
             ->filters([
                 Filter::make('sin_liquidar')

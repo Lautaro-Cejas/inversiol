@@ -18,5 +18,16 @@ class Inversion extends Model
         'fecha_operacion',
         'take_profit_porcentaje', 
         'stop_loss_porcentaje',   
+        'precio_maximo',
     ];
+
+    /**
+     * Get the dynamically calculated stop loss price based on the maximum price reached and the stop loss percentage.
+     */
+    public function getStopLossPriceAttribute(): float
+    {
+        $referencia = $this->precio_maximo ?? $this->precio_compra;
+        
+        return $referencia * (1 - ($this->stop_loss_porcentaje / 100));
+    }
 }
