@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\CustomLogin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Support\Colors\Color;
@@ -11,7 +12,6 @@ use App\Filament\Pages\Dashboard;
 use App\Filament\Widgets\PreciosEnVivo;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('InversIOL')
             ->favicon(asset('favicon.png'))
-            ->login()
+            ->login(CustomLogin::class)
             ->colors([
                 'primary' => Color::Indigo,
                 'gray' => Color::Zinc,
@@ -48,7 +48,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,    
                 PreciosEnVivo::class,
             ])
             ->middleware([
